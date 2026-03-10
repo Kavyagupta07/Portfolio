@@ -46,11 +46,11 @@ export default function Hobbies() {
         setStatus("Request Sent! The owner will contact you via email.");
         setTimeout(() => setIsModalOpen(false), 3000);
       } else {
-        setStatus("Error sending request. Please try again.");
+        setStatus(`EmailJS Response Error: ${result.text}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('EmailJS Error:', error);
-      setStatus("Error sending request. Please try again.");
+      setStatus(`EmailJS Error: ${error?.text || error?.message || "Unknown error"}`);
     }
   };
 
