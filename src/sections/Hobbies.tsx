@@ -20,25 +20,35 @@ export default function Hobbies() {
     setStatus("Sending Request...");
 
     const formData = new FormData(e.currentTarget);
-    formData.append("access_key", "666812ce-be2f-4f67-a29e-f4a402873b4f");
-    formData.append("subject", `Access Request: ${selectedWork.title}`);
-    formData.append("from_name", "Portfolio Access System");
-
-    // Custom body with simple response links
     const userName = formData.get("name");
     const userEmail = formData.get("email");
-    const message = `
-      User ${userName} (${userEmail}) is requesting access to view your writing: "${selectedWork.title}".
-      
-      Message content: ${formData.get("message")}
-      
-      --- Permissions ---
-      To respond, you can click below:
-      [ALLOW ACCESS] - mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hi ${userName}, I have granted you access. You can view it here: ${selectedWork.link}
-      
-      [DENY ACCESS] - mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hi ${userName}, unfortunately I cannot grant access at this time.
+    const userMessage = formData.get("message");
+
+    // Constructing a clean HTML email body for the owner
+    const htmlMessage = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #333;">Access Request</h2>
+        <p><strong>User:</strong> ${userName} (${userEmail})</p>
+        <p><strong>Writing:</strong> ${selectedWork.title}</p>
+        <p><strong>Message:</strong> ${userMessage}</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+        <div style="display: flex; gap: 10px;">
+          <a href="mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hi ${userName}, I have granted you access. You can view it here: ${selectedWork.link}" 
+             style="background-color: #d4af37; color: black; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+            ALLOW
+          </a>
+          <a href="mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hi ${userName}, unfortunately I cannot grant access at this time." 
+             style="background-color: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; margin-left: 10px;">
+            DON'T ALLOW
+          </a>
+        </div>
+      </div>
     `;
-    formData.append("message_body", message);
+
+    formData.append("access_key", "666812ce-be2f-4f67-a29e-f4a402873b4f");
+    formData.append("subject", `New Access Request from ${userName}`);
+    formData.append("from_name", "Portfolio Admin");
+    formData.append("message", htmlMessage); // Web3Forms will treat this as the message content
 
     const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
