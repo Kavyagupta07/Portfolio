@@ -30,7 +30,8 @@ export default function Hobbies() {
       email: userEmail,
       title: selectedWork.title,
       message: userMessage,
-      allow_link: `mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AI have reviewed your request and I am happy to grant you access to view "${selectedWork.title}".%0D%0A%0D%0AYou can access it here: ${selectedWork.link}%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`,
+      // Updated allow_link with writing link directly below the granting phrase and a formal feedback request
+      allow_link: `mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AI have reviewed your request and I am happy to grant you access to view:%0D%0A${selectedWork.link}%0D%0A%0D%0AAfter reading, I would truly appreciate your feedback! Please share your thoughts here: https://forms.gle/qhhQ6fGAw12ryaDn8%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`,
       deny_link: `mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AThank you for your interest. Unfortunately, I cannot grant access to "${selectedWork.title}" at this time.%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`
     };
 
