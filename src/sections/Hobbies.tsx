@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { portfolioData } from '../data/portfolio';
 import { PenTool, Music, ExternalLink, Book, X, Send, Lock } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 export default function Hobbies() {
   const { hobbies } = portfolioData as any;
@@ -20,50 +21,35 @@ export default function Hobbies() {
     setStatus("Sending Request...");
 
     const formData = new FormData(e.currentTarget);
-    const userName = formData.get("name");
-    const userEmail = formData.get("email");
-    const userMessage = formData.get("message");
+    const userName = formData.get("name") as string;
+    const userEmail = formData.get("email") as string;
+    const userMessage = formData.get("message") as string;
 
-    // Constructing a formal plain-text body that won't show broken HTML code
-    const formalMessage = `
---- PORTFOLIO ACCESS REQUEST ---
+    const templateParams = {
+      from_name: userName,
+      from_email: userEmail,
+      work_title: selectedWork.title,
+      message: userMessage,
+      allow_link: `mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AI have reviewed your request and I am happy to grant you access to view "${selectedWork.title}".%0D%0A%0D%0AYou can access it here: ${selectedWork.link}%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`,
+      deny_link: `mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AThank you for your interest. Unfortunately, I cannot grant access to "${selectedWork.title}" at this time.%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`
+    };
 
-DATE: ${new Date().toLocaleString()}
-FROM: ${userName} (${userEmail})
-CONTENT: ${selectedWork.title}
+    try {
+      const result = await emailjs.send(
+        'kavya07',
+        'template_3i3gcdk',
+        templateParams,
+        'mXbvKYb_mDK9Pc6uM'
+      );
 
-USER MESSAGE:
-"${userMessage}"
-
----------------------------------
-        ADMIN ACTIONS
----------------------------------
-
-[ ✅ ALLOW ACCESS ]
-Click here to grant permission:
-mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AI have reviewed your request and I am happy to grant you access to view "${selectedWork.title}".%0D%0A%0D%0AYou can access it here: ${selectedWork.link}%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta
-
-[ ❌ DENY ACCESS ]
-Click here to refuse permission:
-mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AThank you for your interest. Unfortunately, I cannot grant access to "${selectedWork.title}" at this time.%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta
-
----------------------------------
-    `;
-
-    formData.append("access_key", "666812ce-be2f-4f67-a29e-f4a402873b4f");
-    formData.append("subject", `URGENT: Access Request for ${selectedWork.title}`);
-    formData.append("from_name", "Portfolio System");
-    formData.append("message", formalMessage);
-
-    const res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formData
-    }).then((res) => res.json());
-
-    if (res.success) {
-      setStatus("Request Sent! The owner will contact you via email.");
-      setTimeout(() => setIsModalOpen(false), 3000);
-    } else {
+      if (result.status === 200) {
+        setStatus("Request Sent! The owner will contact you via email.");
+        setTimeout(() => setIsModalOpen(false), 3000);
+      } else {
+        setStatus("Error sending request. Please try again.");
+      }
+    } catch (error) {
+      console.error('EmailJS Error:', error);
       setStatus("Error sending request. Please try again.");
     }
   };
@@ -81,7 +67,6 @@ mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${us
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Writing Section */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -121,14 +106,12 @@ mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${us
           </div>
         </motion.div>
 
-        {/* Music Section */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           className="glass p-8 rounded-3xl border-gold/10 hover:border-gold/30 transition-all group"
         >
-          {/* ... existing music section ... */}
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
               <Music size={24} />
@@ -173,7 +156,6 @@ mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${us
         </motion.div>
       </div>
 
-      {/* Modal Overlay */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
