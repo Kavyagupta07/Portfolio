@@ -12,9 +12,8 @@ export default function Contact() {
     setResult("Sending....");
 
     const formData = new FormData(event.currentTarget);
-
-    // Use our environment variable key
-    formData.append("access_key", (process.env as any).WEB3FORMS_ACCESS_KEY || "");
+    // Using your specific key directly so it works on any deployment platform (GitHub Pages, Vercel, Netlify, etc.)
+    formData.append("access_key", "666812ce-be2f-4f67-a29e-f4a402873b4f");
 
     const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
