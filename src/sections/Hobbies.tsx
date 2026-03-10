@@ -24,31 +24,36 @@ export default function Hobbies() {
     const userEmail = formData.get("email");
     const userMessage = formData.get("message");
 
-    // Constructing a clean HTML email body for the owner
-    const htmlMessage = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
-        <h2 style="color: #333;">Access Request</h2>
-        <p><strong>User:</strong> ${userName} (${userEmail})</p>
-        <p><strong>Writing:</strong> ${selectedWork.title}</p>
-        <p><strong>Message:</strong> ${userMessage}</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-        <div style="display: flex; gap: 10px;">
-          <a href="mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hi ${userName}, I have granted you access. You can view it here: ${selectedWork.link}" 
-             style="background-color: #d4af37; color: black; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-            ALLOW
-          </a>
-          <a href="mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hi ${userName}, unfortunately I cannot grant access at this time." 
-             style="background-color: #333; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; margin-left: 10px;">
-            DON'T ALLOW
-          </a>
-        </div>
-      </div>
+    // Constructing a formal plain-text body that won't show broken HTML code
+    const formalMessage = `
+--- PORTFOLIO ACCESS REQUEST ---
+
+DATE: ${new Date().toLocaleString()}
+FROM: ${userName} (${userEmail})
+CONTENT: ${selectedWork.title}
+
+USER MESSAGE:
+"${userMessage}"
+
+---------------------------------
+        ADMIN ACTIONS
+---------------------------------
+
+[ ✅ ALLOW ACCESS ]
+Click here to grant permission:
+mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AI have reviewed your request and I am happy to grant you access to view "${selectedWork.title}".%0D%0A%0D%0AYou can access it here: ${selectedWork.link}%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta
+
+[ ❌ DENY ACCESS ]
+Click here to refuse permission:
+mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AThank you for your interest. Unfortunately, I cannot grant access to "${selectedWork.title}" at this time.%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta
+
+---------------------------------
     `;
 
     formData.append("access_key", "666812ce-be2f-4f67-a29e-f4a402873b4f");
-    formData.append("subject", `New Access Request from ${userName}`);
-    formData.append("from_name", "Portfolio Admin");
-    formData.append("message", htmlMessage); // Web3Forms will treat this as the message content
+    formData.append("subject", `URGENT: Access Request for ${selectedWork.title}`);
+    formData.append("from_name", "Portfolio System");
+    formData.append("message", formalMessage);
 
     const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
