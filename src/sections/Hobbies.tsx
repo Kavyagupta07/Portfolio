@@ -37,7 +37,7 @@ export default function Hobbies() {
     try {
       const result = await emailjs.send(
         'kavya07',
-        'template_3i3gcdk',
+        'template_2j3b1ib',
         templateParams,
         'mXbvKYb_mDK9Pc6uM'
       );
