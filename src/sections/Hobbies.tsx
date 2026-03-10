@@ -26,9 +26,9 @@ export default function Hobbies() {
     const userMessage = formData.get("message") as string;
 
     const templateParams = {
-      from_name: userName,
-      from_email: userEmail,
-      work_title: selectedWork.title,
+      name: userName,
+      email: userEmail,
+      title: selectedWork.title,
       message: userMessage,
       allow_link: `mailto:${userEmail}?subject=Access Granted: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AI have reviewed your request and I am happy to grant you access to view "${selectedWork.title}".%0D%0A%0D%0AYou can access it here: ${selectedWork.link}%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`,
       deny_link: `mailto:${userEmail}?subject=Access Denied: ${selectedWork.title}&body=Hello ${userName},%0D%0A%0D%0AThank you for your interest. Unfortunately, I cannot grant access to "${selectedWork.title}" at this time.%0D%0A%0D%0ABest regards,%0D%0AKavya Kumari Gupta`
